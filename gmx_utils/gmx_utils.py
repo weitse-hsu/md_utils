@@ -1,7 +1,7 @@
 import subprocess
 
 
-def run_gmx_cmd(arguments, prompt_input=None):
+def run_gmx_cmd(arguments, prompt_input=None, print_output=True):
     try:
         result = subprocess.run(
             arguments,
@@ -19,6 +19,7 @@ def run_gmx_cmd(arguments, prompt_input=None):
     if returncode != 0:
         raise RuntimeError(f'{" ".join(arguments[:2])} failed with return code {returncode}:\n{stdout}')
     else:
-        print(f"\n{stdout}")
+        if print_output:
+            print(f"\n{stdout}")
 
     return returncode, stdout

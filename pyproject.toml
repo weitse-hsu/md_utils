@@ -38,6 +38,7 @@ requires-python = ">=3.8"
 # Entry point for CLI commands
 [project.scripts]
 prep_simulation = "gmx_utils.cli.prep_simulation:main"
+process_gmx_traj = "gmx_utils.cli.process_gmx_traj:main"
 
 # Update the urls once the hosting is set up.
 #[project.urls]
