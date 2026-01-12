@@ -9,6 +9,7 @@ from general_utils import utils
 from gmx_utils import gmx_utils
 from gmx_utils import data
 
+
 def initialize(args):
     parser = argparse.ArgumentParser(
         description="Prepare a GROMACS production simulation given necessary input files."
@@ -25,8 +26,8 @@ def initialize(args):
         '--mdp_dir',
         type=str,
         help='The directory containing input MDP files for ion addition (ions.mdp), energy minimization (em.mdp), \
-            NVT equilibration (nvt_equil.mdp), and NPT equilibration (npt_equil.mdp). If not specified, the default MDP files in \
-            the package will be used.'
+            NVT equilibration (nvt_equil.mdp), and NPT equilibration (npt_equil.mdp). If not specified, the default \
+            MDP files in the package will be used.'
     )
     parser.add_argument(
         '-l',
@@ -38,6 +39,7 @@ def initialize(args):
     args_parse = parser.parse_args(args)
 
     return args_parse
+
 
 def main():
     t1 = time.time()
@@ -71,6 +73,7 @@ def main():
 
     input_gro = gro_list[0]
     input_top = top_list[0]
+    cmd_list = []
 
     print("\n1. Simulation box creation")
     print("==========================")
@@ -83,6 +86,7 @@ def main():
         '-c'
     ]
     print(f'\nRunning command: {" ".join(gmx_args)}')
+    cmd_list.append(' '.join(gmx_args))
     returncode, stdout = gmx_utils.run_gmx_cmd(gmx_args)
     box_volume = float(stdout.split(':')[-1].split()[0])
 
@@ -96,6 +100,7 @@ def main():
         '-cs'
     ]
     print(f'\nRunning command: {" ".join(gmx_args)}')
+    cmd_list.append(' '.join(gmx_args))
     returncode, stdout = gmx_utils.run_gmx_cmd(gmx_args)
 
     print("3. Neutralization with ions")
@@ -109,6 +114,7 @@ def main():
         '-maxwarn', '1'
     ]
     print(f'\nRunning command 1: {" ".join(gmx_args)}')
+    cmd_list.append(' '.join(gmx_args))
     returncode, stdout = gmx_utils.run_gmx_cmd(gmx_args)
 
     for line in stdout.splitlines():
@@ -135,6 +141,7 @@ def main():
         '-nn', str(n_chloride),
     ]
     print(f'\nRunning command 2: {" ".join(gmx_args)}')
+    cmd_list.append(' '.join(gmx_args))
     returncode, stdout = gmx_utils.run_gmx_cmd(gmx_args, prompt_input='SOL\n')
 
     print("4. Energy minimization")
@@ -148,10 +155,12 @@ def main():
         '-maxwarn', '1'
     ]
     print(f'\nRunning command 1: {" ".join(gmx_args)}')
+    cmd_list.append(' '.join(gmx_args))
     returncode, stdout = gmx_utils.run_gmx_cmd(gmx_args)
 
     gmx_args = ['gmx', 'mdrun', '-deffnm', 'em/em']
     print(f'\nRunning command 2: {" ".join(gmx_args)}')
+    cmd_list.append(' '.join(gmx_args))
     returncode, stdout = gmx_utils.run_gmx_cmd(gmx_args, prompt_input=None)
 
     print("5. NVT Equilibration")
@@ -169,6 +178,7 @@ def main():
 
     gmx_args = ['gmx', 'mdrun', '-deffnm', 'equil/NVT/equil']
     print(f'\nRunning command 2: {" ".join(gmx_args)}')
+    cmd_list.append(' '.join(gmx_args))
     returncode, stdout = gmx_utils.run_gmx_cmd(gmx_args, prompt_input=None)
 
     print("6. NPT Equilibration")
@@ -186,7 +196,12 @@ def main():
 
     gmx_args = ['gmx', 'mdrun', '-deffnm', 'equil/NPT/equil']
     print(f'\nRunning command 2: {" ".join(gmx_args)}')
+    cmd_list.append(' '.join(gmx_args))
     returncode, stdout = gmx_utils.run_gmx_cmd(gmx_args, prompt_input=None)
 
-    print(f"Elapsed time: {utils.format_time(time.time() - t1)}")
+    print("Summary of commands executed:")
+    for cmd in cmd_list:
+        print(cmd)
+
+    print(f"\nElapsed time: {utils.format_time(time.time() - t1)}")
     print("Preparation completed successfully.")

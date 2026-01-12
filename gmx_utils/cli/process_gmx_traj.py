@@ -5,6 +5,7 @@ import argparse
 from general_utils import utils
 from gmx_utils import gmx_utils
 
+
 def initialize(args):
     parser = argparse.ArgumentParser(
         description="Process a GROMACS trajectory by recentering and rewrapping molecules."
@@ -20,7 +21,8 @@ def initialize(args):
         '-t',
         '--tpr',
         type=str,
-        help='Input GROMACS TPR file corresponding to the trajectory. If not provided, it is assumed to have the same prefix as the trajectory file with .tpr extension.'
+        help='Input GROMACS TPR file corresponding to the trajectory. If not provided, it is assumed to \
+            have the same prefix as the trajectory file with .tpr extension.'
     )
     parser.add_argument(
         '-o',
@@ -33,14 +35,16 @@ def initialize(args):
         '--grps',
         type=str,
         nargs=4,
-        help='Four index groups for centering and output selection for the two trjconv commands. The default is "Backbone System Backbone System".'
+        help='Four index groups for centering and output selection for the two trjconv commands. The default \
+            is "Backbone System Backbone System".'
     )
     parser.add_argument(
         '-dt',
         '--time_step',
         type=float,
         default=200,
-        help='Time step between frames in the trajectory (in ps). If not provided, the time step is read from the trajectory file. The default is 200 ps.'
+        help='Time step between frames in the trajectory (in ps). If not provided, the time step is read \
+            from the trajectory file. The default is 200 ps.'
     )
     parser.add_argument(
         '-l',
@@ -51,6 +55,7 @@ def initialize(args):
     )
     args = parser.parse_args(args)
     return args
+
 
 def main():
     t1 = time.time()
@@ -69,6 +74,7 @@ def main():
     tpr_file = args.tpr if args.tpr else f"{prefix}.tpr"
     output_traj = args.output if args.output else f"{prefix}_center.xtc"
     grps = args.grps if args.grps else ['Backbone', 'System', 'Backbone', 'System']
+    cmd_list = []
 
     # Step 1: Recenter and remove jumps
     gmx_args = [
@@ -84,6 +90,7 @@ def main():
         gmx_args.extend(['-dt', str(args.time_step)])
 
     print(f'\nRunning command: {" ".join(gmx_args)}')
+    cmd_list.append(' '.join(gmx_args))
     returncode, stdout = gmx_utils.run_gmx_cmd(gmx_args, prompt_input=f'{grps[0]}\n{grps[1]}\n')
 
     gmx_args = [
@@ -93,14 +100,19 @@ def main():
         '-o', output_traj,
         '-center',
         '-pbc', 'whole',
-        '-ur' , 'compact'
+        '-ur', 'compact',
     ]
 
     if args.time_step:
         gmx_args.extend(['-dt', str(args.time_step)])
 
     print(f'\nRunning command: {" ".join(gmx_args)}')
+    cmd_list.append(' '.join(gmx_args))
     returncode, stdout = gmx_utils.run_gmx_cmd(gmx_args, prompt_input=f'{grps[2]}\n{grps[3]}\n')
+
+    print("Summary of commands executed:")
+    for cmd in cmd_list:
+        print(cmd)
 
     print(f"Elapsed time: {utils.format_time(time.time() - t1)}")
     print("Trajectory processing completed successfully.")
