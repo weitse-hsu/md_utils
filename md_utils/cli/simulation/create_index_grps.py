@@ -105,6 +105,9 @@ def main():
         sel_str, grp_name = selection.split('#')
         sel_str = sel_str.strip()
         grp_name = grp_name.strip()
+        if grp_name in groups:
+            print(f"Skipping group '{grp_name}': name already exists in index file.")
+            continue
         n_groups += 1
         prompt_input += f"{sel_str}\nname {n_groups-1} {grp_name}\n"  # Note that the index starts from 0
 
