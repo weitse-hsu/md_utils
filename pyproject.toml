@@ -47,6 +47,7 @@ acpype = "md_utils.simulation.acpype:main"
 # structure
 identify_pocket = "md_utils.cli.structure.identify_pocket:main"
 identify_ss_residues = "md_utils.cli.structure.identify_ss_residues:main"
+map_residues = "md_utils.cli.structure.map_residues:main"
 
 # Update the urls once the hosting is set up.
 #[project.urls]
