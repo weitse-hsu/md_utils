@@ -13,7 +13,6 @@ import sys
 import subprocess as sub
 import re
 
-# flake8: noqa
 
 """
     Requirements: Python 2.6 or higher or Python 3.x

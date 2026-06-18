@@ -12,19 +12,13 @@ jobs:
 
     steps:
 
-      - uses: actions/checkout@v2.3.4
-      - uses: actions/setup-python@v2.2.2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-      - name: Install the package
-        run: |
-          pip install "git+https://github.com/weitse-hsu/general_utils.git"
-          pip install .
 
-      - name: Install flake8
-        run: |
-          pip install flake8
+      - name: Install ruff
+        run: pip install ruff
 
-      - name: Run flake8
-        run: |
-          flake8 md_utils
+      - name: Run ruff
+        run: ruff check md_utils

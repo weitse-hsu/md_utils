@@ -83,11 +83,15 @@ class MDP(OrderedDict):
     -------
     >>> from ensemble_md.utils import gmx_parser
     >>> gmx_parser.MDP("em.mdp")
-    MDP([('C0001', 'em.mdp - used as input into grompp to generate em.tpr'), ('C0002', 'All unspecified parameters adopt their own default values.'), ('B0001', ''), ('C0003', 'Run Control'), ('integrator', 'steep'), ('nsteps', 500000), ('B0002', ''), ('C0004', 'Energy minnimization'), ('emtol', 100.0), ('emstep', 0.01), ('B0003', ''), ('C0005', 'Neighbor searching/Electrostatics/Van der Waals'), ('cutoff-scheme', 'Verlet'), ('nstlist', 10), ('ns_type', 'grid'), ('pbc', 'xyz'), ('coulombtype', 'PME'), ('rcoulomb', 1.0), ('rvdw', 1.0)])  # noqa: E501
+    MDP([('C0001', 'em.mdp - used as input into grompp to generate em.tpr'),
+         ('integrator', 'steep'), ('nsteps', 500000), ...])
     """
     # Below are some class variables accessible to all functions.
-    COMMENT = re.compile("""\s*;\s*(?P<value>.*)""")  # noqa: W605
-    PARAMETER = re.compile("""\s*(?P<parameter>[^=]+?)\s*=\s*(?P<value>[^;]*)(?P<comment>\s*;.*)?""", re.VERBOSE)  # noqa: W605, E501
+    COMMENT = re.compile(r"""\s*;\s*(?P<value>.*)""")
+    PARAMETER = re.compile(
+        r"""\s*(?P<parameter>[^=]+?)\s*=\s*(?P<value>[^;]*)(?P<comment>\s*;.*)?""",
+        re.VERBOSE,
+    )
 
     def __init__(self, input_mdp=None, **kwargs):
         super(MDP, self).__init__(**kwargs)  # can use kwargs to set dict! (but no sanity checks!)

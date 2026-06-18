@@ -59,7 +59,7 @@ def main():
     cmd.load(args.input, "structure")
     model = cmd.get_model(f"structure and ss {args.ss_type} and name CA")  # Use CA atoms to get one entry per residue
 
-    segment_dict = {}  # A dictionary to store segments for each chain, e.g., {"A": [("A10", "K20"), ("T30", "A35")], "B": [...]}  # noqa: E501
+    segment_dict = {}  # maps chain ID to list of (start_res, end_res) segment tuples
     for i, a in enumerate(model.atom):
         res = f"{protein.convert_res_code(a.resn)}{a.resi}"
         chain = a.chain

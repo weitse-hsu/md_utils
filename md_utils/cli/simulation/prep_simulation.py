@@ -7,9 +7,9 @@ import shutil
 import argparse
 import warnings
 warnings.filterwarnings("ignore", category=SyntaxWarning)
-from general_utils import utils  # noqa: E402
-from md_utils import data  # noqa: E402
-from md_utils.simulation import gmx_utils, gmx_parser  # noqa: E402
+from general_utils import utils
+from md_utils import data
+from md_utils.simulation import gmx_utils, gmx_parser
 
 
 def initialize(args):

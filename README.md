@@ -1,6 +1,6 @@
 # md_utils
 
-[![GitHub Actions Lint Status](https://github.com/weitse-hsu/md_utils/actions/workflows/lint.yaml/badge.svg)](https://github.com/weitse-hsu/md_utils/actions/workflows/lint.yaml)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 Just a repository of some convenient GROMACS-relevant utility functions/commandline interfaces (CLIs) that I like to use.
 

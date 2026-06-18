@@ -58,7 +58,10 @@ def main():
     ligand = u.select_atoms(f"resname {args.resname}")
     pocket = u.select_atoms(f"protein and around {args.cutoff} group ligand", ligand=ligand)
     if len(ligand.residues) == 0:
-        warnings.warn("No pocket identification will be performed as no residues with the specified ligand resname were found. Please check the input file and ligand resname.")  # noqa: E501
+        warnings.warn(
+            "No pocket identification will be performed as no residues with the specified "
+            "ligand resname were found. Please check the input file and ligand resname."
+        )
     else:
         if len(pocket.residues) == 0:
             print("No pocket residues found within the specified cutoff distance.")
