@@ -2,7 +2,36 @@
 
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
-Just a repository of some convenient GROMACS-relevant utility functions/commandline interfaces (CLIs) that I like to use.
+A collection of utility functions and command-line tools for GROMACS-based MD simulations.
+
+## Installation
+
+```bash
+pip install git+https://github.com/weitse-hsu/general_utils.git
+pip install .
+```
+
+## Command-line tools
+
+### Simulation
+
+| Command | Description |
+|---|---|
+| `prep_simulation` | Prepare a GROMACS production simulation from input files |
+| `process_gmx_traj` | Process a GROMACS trajectory |
+| `create_index_grps` | Create GROMACS index groups from a selections file |
+| `acpype` | Generate GROMACS-compatible topologies via ACPYPE |
+
+### Structure
+
+| Command | Description |
+|---|---|
+| `identify_pocket` | Identify pocket residues around a ligand |
+| `identify_ss_residues` | Identify secondary structure domains in a protein structure |
+| `map_residues` | Map residue numbers between a reference PDB and a simulation GRO file |
+
+Run any command with `--help` for full usage details.
 
 ## Authors
+
 - Wei-Tse Hsu, University of Oxford (wei-tse.hsu@bioch.ox.ac.uk)
