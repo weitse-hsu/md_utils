@@ -1,5 +1,6 @@
 # md_utils
-
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/weitse-hsu/md_utils/tree/main.svg?style=shield)](https://dl.circleci.com/status-badge/redirect/gh/weitse-hsu/md_utils/tree/main)
+[![codecov](https://codecov.io/gh/weitse-hsu/md_utils/graph/badge.svg?token=PgncVdVkDa)](https://codecov.io/gh/weitse-hsu/md_utils)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 A collection of utility functions and command-line tools for GROMACS-based MD simulations.

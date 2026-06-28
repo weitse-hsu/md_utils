@@ -41,7 +41,7 @@ def initialize(args):
         help="Log file to record the output. The default is identify_ss_domains.log."
     )
 
-    args = parser.parse_args()
+    args = parser.parse_args(args)
 
     return args
 
