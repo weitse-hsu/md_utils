@@ -1,0 +1,18 @@
+codecov:
+  notify:
+    after_n_builds: 1
+
+coverage:
+  status:
+    project:
+      default:
+        target: auto    # use previous build's coverage as target
+        threshold: 1%   # allow up to 1% drop without failing
+    patch:
+      default:
+        target: auto
+        threshold: 5%
+
+comment:
+  layout: "reach,diff,flags,files"
+  behavior: default

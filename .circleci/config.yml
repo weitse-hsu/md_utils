@@ -1,0 +1,27 @@
+version: 2.1
+
+orbs:
+  codecov: codecov/codecov@4.2.1
+
+jobs:
+  test:
+    docker:
+      - image: cimg/python:3.10
+    steps:
+      - checkout
+      - run:
+          name: Fetch full git history for versioningit
+          command: git fetch --unshallow || true
+      - run:
+          name: Install package and test dependencies
+          command: pip install -e ".[test]"
+      - run:
+          name: Run tests with coverage
+          command: pytest --cov=md_utils --cov-report=xml --cov-report=term-missing tests/
+      - codecov/upload:
+          file: coverage.xml
+
+workflows:
+  ci:
+    jobs:
+      - test

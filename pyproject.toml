@@ -57,6 +57,7 @@ map_residues = "md_utils.cli.structure.map_residues:main"
 [project.optional-dependencies]
 test = [
   "pytest>=6.1.2",
+  "pytest-cov>=3.0",
 ]
 
 [tool.setuptools]
