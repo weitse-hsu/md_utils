@@ -20,7 +20,12 @@ pip install .
 | `prep_simulation` | Prepare a GROMACS production simulation from input files |
 | `process_gmx_traj` | Process a GROMACS trajectory |
 | `create_index_grps` | Create GROMACS index groups from a selections file |
-| `acpype` | Generate GROMACS-compatible topologies via ACPYPE |
+
+For generating GROMACS-compatible topologies, use the standalone [acpype](https://github.com/alanwilter/acpype) package:
+
+```bash
+conda install -c conda-forge acpype  # or: pip install acpype
+```
 
 ### Structure
 

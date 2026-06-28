@@ -28,9 +28,10 @@ requires-python = ">=3.8"
 # ]
 
 # Other dependencies:
-# - From conda
+# - From conda / PyPI
 #   - openbabel
 #   - modeller
+#   - acpype: conda install -c conda-forge acpype  OR  pip install acpype
 # - From source
 #   - peppr
 #   - pyrmsd: https://github.com/weitse-hsu/pyrmsd
@@ -42,7 +43,6 @@ requires-python = ">=3.8"
 prep_simulation = "md_utils.cli.simulation.prep_simulation:main"
 process_gmx_traj = "md_utils.cli.simulation.process_gmx_traj:main"
 create_index_grps = "md_utils.cli.simulation.create_index_grps:main"
-acpype = "md_utils.simulation.acpype:main"
 
 # structure
 identify_pocket = "md_utils.cli.structure.identify_pocket:main"
@@ -51,8 +51,8 @@ map_residues = "md_utils.cli.structure.map_residues:main"
 
 # Update the urls once the hosting is set up.
 #[project.urls]
-#"Source" = "https://github.com/<username>/RFbind/"
-#"Documentation" = "https://RFbind.readthedocs.io/"
+#"Source" = "https://github.com/<username>/md_utils/"
+#"Documentation" = "https://md_utils.readthedocs.io/"
 
 [project.optional-dependencies]
 test = [
@@ -87,15 +87,12 @@ where = ["."]
 
 # Ref https://setuptools.pypa.io/en/latest/userguide/datafiles.html#package-data
 [tool.setuptools.package-data]
-RFbind = [
+md_utils = [
     "py.typed"
 ]
 
 [tool.ruff]
 line-length = 120
-exclude = [
-    "md_utils/simulation/acpype.py",
-]
 
 [tool.ruff.lint]
 select = ["E", "F", "W"]
