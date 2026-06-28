@@ -24,20 +24,39 @@ def _parse_component(value: str):
 
 
 def _parse_landmark(value: str):
-    """Parse 'COMPONENT:RESID1,RESID2,...' into (component, [resids])."""
+    """Parse 'COMPONENT:RESID1,RESID2,...' into (component, [resids]).
+
+    Each token may be a single residue number or a range (e.g. 118-132).
+    """
     if ":" not in value:
         raise argparse.ArgumentTypeError(
             f"Landmark must be formatted as 'COMPONENT:RESID1,RESID2,...', got: {value!r}"
         )
     name, resids_str = value.split(":", 1)
     name = name.strip()
+    tokens = []
     try:
-        resids = [int(r.strip()) for r in resids_str.split(",") if r.strip()]
+        for token in resids_str.split(","):
+            token = token.strip()
+            if not token:
+                continue
+            if not token.startswith("-") and "-" in token:
+                start_str, end_str = token.split("-", 1)
+                start, end = int(start_str.strip()), int(end_str.strip())
+                if start > end:
+                    raise argparse.ArgumentTypeError(
+                        f"Invalid range {token!r} in landmark {value!r}: start > end"
+                    )
+                tokens.append((start, end))
+            else:
+                tokens.append(int(token))
+    except argparse.ArgumentTypeError:
+        raise
     except ValueError as exc:
         raise argparse.ArgumentTypeError(
             f"Invalid residue number in landmark {value!r}: {exc}"
         ) from exc
-    return name, resids
+    return name, tokens
 
 
 def initialize(args):
@@ -95,10 +114,11 @@ def initialize(args):
         action="append",
         dest="landmarks",
         default=[],
-        metavar="COMPONENT:RESID[,RESID...]",
+        metavar="COMPONENT:RESID[,RESID...|START-END...]",
         help=(
-            "PDB residue numbers of interest to report after mapping. Repeat for "
-            "multiple components. Example: --landmark ATP8B:237,260,261"
+            "PDB residue numbers of interest to report after mapping. Each token may "
+            "be a single residue or a range (e.g. 118-132). Repeat for multiple "
+            "components. Example: --landmark ATP8B:237,260,118-132"
         )
     )
     parser.add_argument(
@@ -153,7 +173,7 @@ def initialize(args):
 
 
 _TSV_FIELDNAMES = [
-    "component", "pdb_id", "pdb_resid", "pdb_icode", "pdb_resname", "pdb_aa",
+    "component", "pdb_segid", "pdb_resid", "pdb_icode", "pdb_resname", "pdb_aa",
     "pdb_component_ordinal", "gro_resid", "gro_resname", "gro_aa",
     "gro_protein_ordinal", "gro_file_ordinal", "aa_match",
 ]

@@ -459,7 +459,7 @@ def build_mapping_rows(
         gro_r = gro_residues[gro_i]
         rows.append({
             "component": component,
-            "pdb_id": pdb_r.pdb_id,
+            "pdb_segid": pdb_r.pdb_id,
             "pdb_resid": pdb_r.pdb_resid,
             "pdb_icode": pdb_r.icode,
             "pdb_resname": pdb_r.resname,
@@ -492,7 +492,7 @@ def check_nonoverlapping_mappings(
             print("  Overlap:")
             for row in rows:
                 print(
-                    f"    {row['component']} {row['pdb_id']}:{row['pdb_resid']} "
+                    f"    {row['component']} {row['pdb_segid']}:{row['pdb_resid']} "
                     f"-> GRO resid {row['gro_resid']} ({row['gro_resname']})"
                 )
         raise RuntimeError("Non-unique GRO mapping detected.")
@@ -515,27 +515,46 @@ def check_monotonicity(
 
 def print_landmarks(
     all_rows: List[Dict[str, object]],
-    landmark_pdb_residues: Dict[str, List[int]],
+    landmark_pdb_residues: Dict[str, List],
 ) -> None:
-    """Print the GRO mapping for each requested landmark PDB residue."""
+    """Print the GRO mapping for each requested landmark PDB residue or range."""
     print("\nLandmark residue mappings")
-    for component, pdb_resids in landmark_pdb_residues.items():
-        if not pdb_resids:
+    for component, tokens in landmark_pdb_residues.items():
+        if not tokens:
             continue
         print(f"  {component}:")
-        for pdb_resid in pdb_resids:
-            hits = [
-                row for row in all_rows
-                if row["component"] == component and int(row["pdb_resid"]) == pdb_resid
-            ]
-            if hits:
-                for row in hits:
+        for token in tokens:
+            if isinstance(token, tuple):
+                start, end = token
+                hits = [
+                    row for row in all_rows
+                    if row["component"] == component
+                    and start <= int(row["pdb_resid"]) <= end
+                ]
+                if hits:
+                    gro_resids = [int(row["gro_resid"]) for row in hits]
+                    n_total = end - start + 1
+                    n_mapped = len(hits)
+                    note = "" if n_mapped == n_total else f" ({n_mapped}/{n_total} PDB residues mapped)"
                     print(
-                        f"    PDB {row['pdb_id']}:{row['pdb_resid']} {row['pdb_resname']} "
-                        f"-> GRO resid {row['gro_resid']} {row['gro_resname']} "
-                        f"(GRO protein ordinal {row['gro_protein_ordinal']})"
+                        f"    PDB {start}-{end} "
+                        f"-> GRO resid {min(gro_resids)}-{max(gro_resids)}"
+                        f"{note}"
                     )
+                else:
+                    print(f"    PDB resid {start}-{end}: NOT MAPPED")
             else:
-                print(f"    PDB resid {pdb_resid}: NOT MAPPED")
-
-
+                pdb_resid = token
+                hits = [
+                    row for row in all_rows
+                    if row["component"] == component and int(row["pdb_resid"]) == pdb_resid
+                ]
+                if hits:
+                    for row in hits:
+                        print(
+                            f"    PDB {row['pdb_segid']}:{row['pdb_resid']} {row['pdb_resname']} "
+                            f"-> GRO resid {row['gro_resid']} {row['gro_resname']} "
+                            f"(GRO protein ordinal {row['gro_protein_ordinal']})"
+                        )
+                else:
+                    print(f"    PDB resid {pdb_resid}: NOT MAPPED")
