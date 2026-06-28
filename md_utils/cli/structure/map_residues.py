@@ -174,7 +174,7 @@ def initialize(args):
 
 _TSV_FIELDNAMES = [
     "component", "pdb_segid", "pdb_resid", "pdb_icode", "pdb_resname", "pdb_aa",
-    "pdb_component_ordinal", "gro_resid", "gro_resname", "gro_aa",
+    "pdb_component_ordinal", "gro_resid", "gro_segment", "gro_resname", "gro_aa",
     "gro_protein_ordinal", "gro_file_ordinal", "aa_match",
 ]
 

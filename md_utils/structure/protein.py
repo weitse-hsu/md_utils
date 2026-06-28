@@ -88,6 +88,7 @@ class GROResidue:
     aa: str
     gro_protein_ordinal: int
     gro_file_ordinal: int
+    gro_segment: int = 0
 
 
 @dataclass(frozen=True)
@@ -231,7 +232,9 @@ def read_gro_protein_residues(gro_file: str) -> List[GROResidue]:
     """
     residues: List[GROResidue] = []
     last_key = None
+    last_unique_resid: Optional[int] = None
     gro_file_ordinal = 0
+    gro_segment = 0
 
     with open(gro_file, "r", encoding="utf-8", errors="replace") as handle:
         lines = handle.readlines()
@@ -257,6 +260,9 @@ def read_gro_protein_residues(gro_file: str) -> List[GROResidue]:
         key = (gro_resid, resname)
         if key != last_key:
             gro_file_ordinal += 1
+            if last_unique_resid is not None and gro_resid < last_unique_resid:
+                gro_segment += 1
+            last_unique_resid = gro_resid
             last_key = key
             if aa is not None:
                 residues.append(
@@ -266,6 +272,7 @@ def read_gro_protein_residues(gro_file: str) -> List[GROResidue]:
                         aa=aa,
                         gro_protein_ordinal=len(residues) + 1,
                         gro_file_ordinal=gro_file_ordinal,
+                        gro_segment=gro_segment,
                     )
                 )
 
@@ -404,10 +411,17 @@ def summarize_alignment(
     if aln.gro_start_index >= 0:
         start = gro_residues[aln.gro_start_index]
         end = gro_residues[aln.gro_end_index]
+        if start.gro_segment > 0 or end.gro_segment != start.gro_segment:
+            if start.gro_segment == end.gro_segment:
+                seg_info = f", segment {start.gro_segment}"
+            else:
+                seg_info = f", segments {start.gro_segment}-{end.gro_segment}"
+        else:
+            seg_info = ""
         print(
             f"  GRO protein-ordinal span:      "
             f"{start.gro_protein_ordinal}-{end.gro_protein_ordinal} "
-            f"(GRO resid {start.gro_resid}-{end.gro_resid})"
+            f"(GRO resid {start.gro_resid}-{end.gro_resid}{seg_info})"
         )
 
     if mismatches:
@@ -466,6 +480,7 @@ def build_mapping_rows(
             "pdb_aa": pdb_r.aa,
             "pdb_component_ordinal": pdb_r.pdb_component_ordinal,
             "gro_resid": gro_r.gro_resid,
+            "gro_segment": gro_r.gro_segment,
             "gro_resname": gro_r.resname,
             "gro_aa": gro_r.aa,
             "gro_protein_ordinal": gro_r.gro_protein_ordinal,
