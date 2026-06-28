@@ -1,6 +1,5 @@
 import os
 import re
-import six
 import warnings
 from collections import OrderedDict
 
@@ -119,6 +118,8 @@ class MDP(OrderedDict):
         """
         if type(s) is not str:
             return s
+        if not s.strip():
+            return ""
         for converter in int, float, str:  # try them in increasing order of lenience
             try:
                 s = [converter(i) for i in s.split()]
@@ -193,7 +194,7 @@ class MDP(OrderedDict):
                 else:  # parameter = value
                     if skipempty and (v == "" or v is None):
                         continue
-                    if isinstance(v, six.string_types) or not hasattr(v, "__iter__"):
+                    if isinstance(v, str) or not hasattr(v, "__iter__"):
                         mdp.write(f"{k!s} = {v!s}\n")
                     else:
                         mdp.write(f"{k} = {' '.join(map(str, v))}\n")
